@@ -105,6 +105,9 @@ h2{font-size:clamp(2.2rem,4.8vw,3.9rem);line-height:1;letter-spacing:-.035em;fon
 .reel::after{content:"";position:absolute;top:31px;right:30px;border-left:13px solid var(--ink);border-top:8px solid transparent;border-bottom:8px solid transparent}
 .reel strong{display:block;font-family:"Bricolage Grotesque",sans-serif;font-size:1.25rem;letter-spacing:-.02em}
 .reel small{opacity:.75}
+.reel video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#111}
+.reel:has(video)::before,.reel:has(video)::after{display:none}
+.reel:has(video)>div{position:relative;z-index:1;color:#fff;text-shadow:0 2px 14px rgba(0,0,0,.7)}
 .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:40px;list-style:none;margin:0;padding:0;counter-reset:s}
 .steps li{counter-increment:s;position:relative;padding-top:26px}
 .steps li::after{content:"";position:absolute;top:0;left:0;height:3px;width:100%;background:var(--acc);transform:scaleX(0);transform-origin:left;transition:transform 1.4s var(--ease) .2s}
@@ -179,13 +182,22 @@ section{padding-top:80px}.svc{margin-top:80px;padding:72px 0 80px}
 <section id="work">
 <h2 class="sp">Videos that look like they cost more.</h2>
 <div class="reels">
-<div class="reel" data-r><div><strong>Finance educator</strong><small>Add your reel</small></div></div>
+<div class="reel" data-r>
+  <video src="finance%20educator%20.mp4" autoplay muted loop playsinline preload="metadata"></video>
+  <div><strong>Finance educator</strong><small>Short-form edit</small></div>
+</div>
 <div class="reel" data-r style="--d:110">
   <video src="Real%20estate%20agent.mp4" autoplay muted loop playsinline preload="metadata"></video>
   <div><strong>Real estate agent</strong><small>Short-form edit</small></div>
 </div>
-<div class="reel" data-r style="--d:220"><div><strong>Business coach</strong><small>Add your reel</small></div></div>
-<div class="reel" data-r style="--d:330"><div><strong>Course creator</strong><small>Add your reel</small></div></div>
+<div class="reel" data-r style="--d:220">
+  <video src="Business%20Caoch.mp4" autoplay muted loop playsinline preload="metadata"></video>
+  <div><strong>Business coach</strong><small>Short-form edit</small></div>
+</div>
+<div class="reel" data-r style="--d:330">
+  <video src="doctor.mp4" autoplay muted loop playsinline preload="metadata"></video>
+  <div><strong>Doctor</strong><small>Short-form edit</small></div>
+</div>
 </div>
 </section>
 
