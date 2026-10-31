@@ -143,6 +143,9 @@ iframe.skiptranslate,.goog-te-banner-frame,#goog-gt-tt,.goog-te-balloon-frame{di
 body{top:0!important}
 .goog-text-highlight{background:none!important;box-shadow:none!important}
 .langs select{font:inherit;font-size:.85rem;font-weight:500;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:7px 14px;cursor:pointer}
+.tnote{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 18px);translate:-50% 0;z-index:60;display:flex;align-items:center;gap:12px;background:var(--ink);color:var(--bg);padding:8px 8px 8px 18px;border-radius:999px;font-size:.88rem;box-shadow:0 14px 40px rgba(0,0,0,.3);transition:opacity .6s}
+.tnote.hide{opacity:0;pointer-events:none}
+.tnote button{font:inherit;font-weight:600;background:var(--acc);color:#fff;border:0;border-radius:999px;padding:7px 14px;cursor:pointer}
 </style>
 </head>
 <body>
@@ -240,29 +243,46 @@ body{top:0!important}
 
 <script>
 (function(){
-var d=document,h=d.documentElement;
+var d=document,h=d.documentElement,qs=location.search;
+var CM={};
+[['es','ES MX AR CO CL PE VE EC GT CU BO DO HN PY SV NI CR PA UY'],['pt','PT BR AO MZ'],['fr','FR MC LU SN CI CM CD MG ML BF NE TG BJ GN HT GA CG TD'],['de','DE AT CH LI'],['it','IT SM VA'],['nl','NL BE SR'],['sv','SE'],['no','NO'],['da','DK'],['fi','FI'],['is','IS'],['pl','PL'],['cs','CZ'],['sk','SK'],['hu','HU'],['ro','RO MD'],['bg','BG'],['el','GR CY'],['tr','TR'],['ru','RU BY KZ'],['uk','UA'],['hr','HR'],['sr','RS'],['sl','SI'],['lt','LT'],['lv','LV'],['et','EE'],['ar','SA EG IQ JO KW BH OM LB SY YE LY TN DZ MA SD'],['ja','JP'],['ko','KR'],['zh-CN','CN'],['zh-TW','TW HK'],['vi','VN'],['th','TH'],['id','ID'],['iw','IL'],['fa','IR']].forEach(function(r){r[1].split(' ').forEach(function(c){CM[c]=r[0]})});
+function pm(re){var m=qs.match(re);return m?m[1]:null}
 function det(){var p=String((navigator.languages&&navigator.languages[0])||navigator.language||'en').toLowerCase();if(p.indexOf('zh')===0)return /tw|hk|mo|hant/.test(p)?'zh-TW':'zh-CN';p=p.slice(0,2);return({nb:'no',nn:'no',he:'iw',fil:'tl'})[p]||p}
-var q=(location.search.match(/[?&]lang=([A-Za-z-]{2,7})/)||[])[1],st=null;
+var q=pm(/[?&]lang=([A-Za-z-]{2,7})/),st=null;
 try{if(q)localStorage.setItem('pn_lang',q);else st=localStorage.getItem('pn_lang')}catch(x){}
-var l=q||st||det();
 function ck(v,x){var c='googtrans='+v+';path=/'+(x||'');d.cookie=c;d.cookie=c+';domain='+location.hostname}
-if(l.slice(0,2)==='en'){ck('',';expires=Thu, 01 Jan 1970 00:00:00 GMT');l='en'}
-else{
+var O=[['en','English (original)'],['es','Español'],['it','Italiano'],['fr','Français'],['de','Deutsch'],['pt','Português'],['nl','Nederlands'],['sv','Svenska'],['no','Norsk'],['da','Dansk'],['fi','Suomi'],['pl','Polski'],['tr','Türkçe'],['ru','Русский'],['ar','العربية'],['hi','हिन्दी'],['ur','اردو'],['zh-CN','中文 (简体)'],['ja','日本語'],['ko','한국어']];
+var sel=d.createElement('select'),f=d.querySelector('footer');
+sel.setAttribute('aria-label','Language');
+function setSel(l){var ok=false,i;for(i=0;i<sel.options.length;i++){if(sel.options[i].value===l){ok=true}}if(!ok){var op=d.createElement('option');op.value=l;op.textContent=l.toUpperCase();sel.appendChild(op)}sel.value=l}
+O.forEach(function(o){var op=d.createElement('option');op.value=o[0];op.textContent=o[1];sel.appendChild(op)});
+sel.addEventListener('change',function(){try{localStorage.setItem('pn_lang',sel.value)}catch(x){}location.href=location.pathname+'?lang='+sel.value});
+if(f){var w=d.createElement('div');w.className='langs notranslate';w.appendChild(sel);f.appendChild(w)}
+function note(){var n=d.createElement('div');n.className='tnote notranslate';n.innerHTML='<span>🌐 Translated automatically</span>';var b=d.createElement('button');b.type='button';b.textContent='Show English';b.onclick=function(){try{localStorage.setItem('pn_lang','en')}catch(x){}location.href=location.pathname+'?lang=en'};n.appendChild(b);d.body.appendChild(n);setTimeout(function(){n.classList.add('hide')},9000)}
+var started=false;
+function go(l,a){
+if(started)return;
+if(!l||l.slice(0,2)==='en'){ck('',';expires=Thu, 01 Jan 1970 00:00:00 GMT');setSel('en');return}
+started=true;setSel(l);
 ck('/en/'+l);h.classList.add('pn-tr');
 var box=d.createElement('div');box.id='google_translate_element';box.hidden=true;d.body.appendChild(box);
 window.googleTranslateElementInit=function(){new google.translate.TranslateElement({pageLanguage:'en',autoDisplay:false},'google_translate_element')};
 var g=d.createElement('script');g.src='https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';g.async=true;d.head.appendChild(g);
 setTimeout(function(){window.dispatchEvent(new Event('resize'))},2500);
+if(a)note();
 }
-var f=d.querySelector('footer');
-if(f){
-var O=[['en','English (original)'],['es','Español'],['it','Italiano'],['fr','Français'],['de','Deutsch'],['pt','Português'],['nl','Nederlands'],['sv','Svenska'],['no','Norsk'],['da','Dansk'],['fi','Suomi'],['pl','Polski'],['tr','Türkçe'],['ru','Русский'],['ar','العربية'],['hi','हिन्दी'],['ur','اردو'],['zh-CN','中文 (简体)'],['ja','日本語'],['ko','한국어']];
-if(O.map(function(o){return o[0]}).indexOf(l)<0)O.push([l,l.toUpperCase()]);
-var w=d.createElement('div');w.className='langs notranslate';
-var sel=d.createElement('select');sel.setAttribute('aria-label','Language');
-O.forEach(function(o){var op=d.createElement('option');op.value=o[0];op.textContent=o[1];if(o[0]===l)op.selected=true;sel.appendChild(op)});
-sel.addEventListener('change',function(){try{localStorage.setItem('pn_lang',sel.value)}catch(x){}location.href=location.pathname+'?lang='+sel.value});
-w.appendChild(sel);f.appendChild(w)}
+function apply(c){var m=CM[c];if(m)go(m,true)}
+function look(u,txt,next){fetch(u).then(function(r){return txt?r.text():r.json()}).then(function(v){var c=txt?String(v).trim():(v&&v.country);if(c&&c.length===2){try{sessionStorage.setItem('pn_cc',c.toUpperCase())}catch(x){}apply(c.toUpperCase())}else if(next)next()}).catch(function(){if(next)next()})}
+var br=det();
+setSel('en');
+if(q||st){go(q||st,false)}
+else if(br.slice(0,2)!=='en'){go(br,true)}
+else{
+var qc=pm(/[?&]country=([A-Za-z]{2})/),c=qc?qc.toUpperCase():null;
+try{if(!c)c=sessionStorage.getItem('pn_cc')}catch(x){}
+if(c)apply(c);
+else look('https://api.country.is/',false,function(){look('https://ipapi.co/country/',true)});
+}
 })();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
